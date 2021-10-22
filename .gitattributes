@@ -1,0 +1,12 @@
+# use LF file endings by default
+* text=auto eol=lf
+
+# binary files which should not be modified
+*.bmp binary
+*.dds binary
+*.gif binary
+*.jpg binary
+*.pbm binary
+*.pgm binary
+*.png binary
+*.ppm binary

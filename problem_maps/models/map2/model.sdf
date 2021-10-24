@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
-  <model name='Map2'>
+  <model name='map2'>
     <pose>0 0 0 0 -0 0</pose>
     <link name='Wall_12'>
       <collision name='Wall_12_Collision'>

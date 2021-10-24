@@ -1,2 +1,5 @@
-.vscode # VSCode config files
-.log # Log files
+# VSCode config files
+.vscode
+
+# Log files
+.log

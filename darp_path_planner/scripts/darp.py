@@ -4,16 +4,14 @@ import sys
 import cv2
 import random
 from scipy import ndimage
-from Visualization import darp_area_visualization
 
 np.set_printoptions(threshold=sys.maxsize)
 
 
 class DARP():
-    def __init__(self, nx, ny, MaxIter, CCvariation, randomLevel, dcells, importance, notEqualPortions, initial_positions, portions, obstacles_positions, visualization):
+    def __init__(self, nx, ny, MaxIter, CCvariation, randomLevel, dcells, importance, notEqualPortions, initial_positions, portions, obstacles_positions):
         self.rows = nx
         self.cols = ny
-        self.visualization = visualization
         empty_space = []
         if nx > ny:
             for j in range(ny, nx):
@@ -72,9 +70,6 @@ class DARP():
 
         for r in range(self.droneNo):
             self.color.append(list(np.random.choice(range(256), size=3)))
-
-        if self.visualization:
-            self.assignment_matrix_visualization = darp_area_visualization(self.A, self.droneNo, self.color)
 
         self.success = self.update()
 
@@ -170,8 +165,6 @@ class DARP():
                             ConnectedMultiplierList[r, :, :])
 
                 iteration += 1
-                if self.visualization:
-                    self.assignment_matrix_visualization.placeCells(self.A)
                 # time.sleep(0.5)
 
             if iteration >= self.MaxIter:

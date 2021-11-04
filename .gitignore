@@ -3,3 +3,6 @@
 
 # Log files
 .log
+
+# python bytecode
+__pycache__

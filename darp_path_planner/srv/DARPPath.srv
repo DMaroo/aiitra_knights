@@ -1,0 +1,7 @@
+uint8 mode
+uint8 bot
+uint64 step
+---
+int64 new_x
+int64 new_y
+time timestamp

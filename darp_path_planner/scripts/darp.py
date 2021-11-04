@@ -7,7 +7,6 @@ from scipy import ndimage
 
 np.set_printoptions(threshold=sys.maxsize)
 
-
 class DARP():
     def __init__(self, nx, ny, MaxIter, CCvariation, randomLevel, dcells, importance, notEqualPortions, initial_positions, portions, obstacles_positions):
         self.rows = nx

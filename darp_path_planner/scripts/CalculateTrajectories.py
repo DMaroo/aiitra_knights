@@ -2,7 +2,6 @@ import numpy as np
 from Edges import Edge
 import sys
 
-
 class CalculateTrajectories():
     def __init__(self, r, c, MST):
         self.MAX_NODES = 4*r*c

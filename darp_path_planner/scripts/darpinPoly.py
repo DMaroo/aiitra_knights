@@ -4,9 +4,6 @@ from kruskal import Kruskal
 from CalculateTrajectories import CalculateTrajectories
 import sys
 import argparse
-from turns import turns
-from pprint import pprint
-
 
 class DARPinPoly(DARP):
     def __init__(self, nx, ny, MaxIter, CCvariation, randomLevel, dcells, importance, notEqualPortions, initial_positions, portions, obstacles_positions):
@@ -16,7 +13,6 @@ class DARPinPoly(DARP):
             print("DARP did not manage to find a solution for the given configuration!")
             sys.exit(0)
 
-        mode_to_drone_turns = dict()
         FinalPaths = []
 
         for mode in range(4):
@@ -33,95 +29,8 @@ class DARPinPoly(DARP):
             # To print all the paths plannes
             #print(AllRealPaths)
             FinalPaths.append(AllRealPaths)
-            #print("\n\n\n")
-
-            TypesOfLines = np.zeros((self.rows*2, self.cols*2, 2))
-            for r in range(self.droneNo):
-                flag = False
-                for connection in AllRealPaths[r]:
-                    if flag:
-                        if TypesOfLines[connection[0]][connection[1]][0] == 0:
-                            indxadd1 = 0
-                        else:
-                            indxadd1 = 1
-
-                        if TypesOfLines[connection[2]][connection[3]][0] == 0 and flag:
-                            indxadd2 = 0
-                        else:
-                            indxadd2 = 1
-                    else:
-                        if not (TypesOfLines[connection[0]][connection[1]][0] == 0):
-                            indxadd1 = 0
-                        else:
-                            indxadd1 = 1
-                        if not (TypesOfLines[connection[2]][connection[3]][0] == 0 and flag):
-                            indxadd2 = 0
-                        else:
-                            indxadd2 = 1
-
-                    flag = True
-                    if connection[0] == connection[2]:
-                        if connection[1] > connection[3]:
-                            TypesOfLines[connection[0]][connection[1]][indxadd1] = 2
-                            TypesOfLines[connection[2]][connection[3]][indxadd2] = 3
-                        else:
-                            TypesOfLines[connection[0]][connection[1]][indxadd1] = 3
-                            TypesOfLines[connection[2]][connection[3]][indxadd2] = 2
-
-                    else:
-                        if (connection[0] > connection[2]):
-                            TypesOfLines[connection[0]][connection[1]][indxadd1] = 1
-                            TypesOfLines[connection[2]][connection[3]][indxadd2] = 4
-                        else:
-                            TypesOfLines[connection[0]][connection[1]][indxadd1] = 4
-                            TypesOfLines[connection[2]][connection[3]][indxadd2] = 1
-
-            subCellsAssignment = np.zeros((2*self.rows, 2*self.cols))
-            for i in range(self.rows):
-                for j in range(self.cols):
-                    subCellsAssignment[2 * i][2 * j] = self.A[i][j]
-                    subCellsAssignment[2 * i + 1][2 * j] = self.A[i][j]
-                    subCellsAssignment[2 * i][2 * j + 1] = self.A[i][j]
-                    subCellsAssignment[2 * i + 1][2 * j + 1] = self.A[i][j]
-
-            drone_turns = turns(AllRealPaths)
-            drone_turns.count_turns()
-            mode_to_drone_turns[mode] = drone_turns
-
-        #print("\nResults:\n")
-
-        for mode, val in mode_to_drone_turns.items():
-            #printing initial positions of the bots in long form as CSV
-            for in_pos_input in pos_in_long:
-                print(in_pos_input,end=",")
-            #printing themode for which the values are being printed
-            print(mode,end="")
-            straightlinemoves = []
-            for i in range(self.droneNo):
-                straightlinemoves.append(len(FinalPaths[mode][i])-mode_to_drone_turns[mode].turns[i])
-                #print("Straight line moves for robot " + str(i) + " = " + str(len(FinalPaths[mode][i])-mode_to_drone_turns[mode].turns[i]))
-            #print("Straight line moves: ",end="")
-
-            #prints straight line moves as CSV
-            for num_straights in straightlinemoves:
-                print(",",num_straights,sep='',end="")
-
-            #print straight line moves as a list
-            #print(straightlinemoves, end="   ")
-
-            #print(val)   #val is an Object that stores data about the turns. : val.turns , val.avg (average turns), val.std (std dev of turns)
-
-            #printing only number of turns
-            #print("Turns: ",end="")
-
-            #prints values of number of turns as CSV
-            for num_turns in val.turns:
-                print(",",num_turns,sep='',end="")
-
-            #prints value of turns as a list
-            #print(val.turns, end="   ")
-
-            print("")
+        
+        self.final_paths = FinalPaths
 
 
     def CalcRealBinaryReg(self, BinaryRobotRegion, rows, cols):
@@ -148,7 +57,6 @@ class DARPinPoly(DARP):
 
 
 if __name__ == '__main__':
-
     argparser = argparse.ArgumentParser(
         description=__doc__)
     argparser.add_argument(

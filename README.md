@@ -8,7 +8,9 @@ Repository for Team Knights consisting all the ROS packages required in AIITRA c
 cd catkin_workspace # catkin_workspace is a catkin workspace
 git clone https://github.com/DMaroo/aiitra_knights.git src
 cd ..
-catkin build
+catkin_make
 ```
+
+*Note:* Use `catkin_make` and not `catkin build`.
 
 Respect the clang-format.

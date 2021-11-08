@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <arg name="problem_map" default="$(find problem_maps)/launch/map1.launch" />
+    <include file="$(arg problem_map)" />
+
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knight_description)/urdf/knight.urdf'" />
+
+    <node name="gazebo_robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="darp_service" pkg="darp_path_planner" type="path_service.py" />
+    <node name="knight_simulation_main" pkg="knight_simulation" type="knight_simulation_node" />
+</launch>

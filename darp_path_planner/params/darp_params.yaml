@@ -1,12 +1,12 @@
 darp:
-  rows: 10
-  cols: 10
+  rows: 50
+  cols: 50
   maxIter: 80000
   CCvariation: 0.01
   randomLevel: 0.0001
   dcells: 2
   importance: false
   nep: false
-  initial_positions: [1, 3, 9]
+  initial_positions: [1897, 95, 1297]
   portions: [0.2, 0.3, 0.5]
   obstacles_positions: []

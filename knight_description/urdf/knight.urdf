@@ -25,9 +25,9 @@
         </collision>
 
         <inertial>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <mass value="4" />
-            <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.02" />
+            <origin xyz="0 0.002 0.040" rpy="0 0 0" />
+            <mass value="7.7" />
+            <inertia ixx="0.075" ixy="0" ixz="0" iyy="0.075" iyz="0" izz="0.115" />
         </inertial>
     </link>
 
@@ -51,11 +51,21 @@
             <geometry>
                 <mesh filename="package://knight_description/meshes/wheel.stl" scale="0.001 0.001 0.001" />
             </geometry>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>0.9</mu>
+                        <mu2>0.7</mu2>
+                        <slip1>0.5</slip1>
+                        <slip2>0.5</slip2>
+                    </ode>
+                </friction>
+            </surface>
         </collision>
 
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <mass value="0.5" />
+            <mass value="1" />
             <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.001" />
         </inertial>
     </link>
@@ -80,11 +90,21 @@
             <geometry>
                 <mesh filename="package://knight_description/meshes/wheel.stl" scale="0.001 0.001 0.001" />
             </geometry>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>0.9</mu>
+                        <mu2>0.7</mu2>
+                        <slip1>0.5</slip1>
+                        <slip2>0.5</slip2>
+                    </ode>
+                </friction>
+            </surface>
         </collision>
 
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <mass value="0.5" />
+            <mass value="1" />
             <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.001" />
         </inertial>
     </link>
@@ -127,7 +147,7 @@
             <rightJoint>right_wheel_joint</rightJoint>
             <wheelSeparation>0.163</wheelSeparation>
             <wheelDiameter>0.0756</wheelDiameter>
-            <torque>0.5</torque>
+            <torque>1</torque>
             <commandTopic>knight/cmd_vel</commandTopic>
             <odometryTopic>knight/odom</odometryTopic>
             <odometryFrame>odom</odometryFrame>

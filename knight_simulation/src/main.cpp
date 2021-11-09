@@ -6,17 +6,18 @@
 #include <mutex>
 #include <ros/package.h>
 #include <ros/ros.h>
+#include <tf2/utils.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-// #include <thread>
+#include <thread>
 
 #define MAP_X 50
 #define MAP_Y 50
 
-#define ANG_VEL 200
-#define LIN_VEL 1000
+#define ANG_VEL 8
+#define LIN_VEL 12
 
-#define ANGLE_THRESH 0.05
-#define POS_THRESH	 0.1
+#define ANGLE_THRESH 0.5
+#define POS_THRESH	 0.2
 
 void cell_to_map(int row, int col, int rows, int cols, double& x, double& y);
 
@@ -56,23 +57,23 @@ void process_knight(Knight& knight, ros::NodeHandle& nh)
 
 	knight.need_path = true;
 
-	std::mutex nh_lock;
-	nh_lock.lock();
+	std::mutex lock;
+	lock.lock();
 	ros::Publisher pub_vel = nh.advertise<geometry_msgs::Twist>(knight.ns + "/knight/cmd_vel", 100);
-	ros::Subscriber odom_sub = nh.subscribe("/odom", 100, &Knight::sub_callback, &knight);
+	ros::Subscriber odom_sub = nh.subscribe(knight.ns + "/knight/odom", 100, &Knight::sub_callback, &knight);
 	ros::ServiceClient darp_client = nh.serviceClient<darp_path_planner::DARPPath>("/darp_path");
-	nh_lock.unlock();
+	lock.unlock();
 
 	darp_path_planner::DARPPath path_request;
 
 	ros::Rate loop_rate(200);
 
-	ros::MultiThreadedSpinner spinner;
-
 	bool rotate = true;
 	double angle;
 	tf2::Quaternion q;
 	geometry_msgs::Twist msg;
+
+	double yaw;
 
 	while (ros::ok())
 	{
@@ -99,6 +100,8 @@ void process_knight(Knight& knight, ros::NodeHandle& nh)
 			}
 			else
 			{
+				ros::spinOnce();
+				loop_rate.sleep();
 				continue;
 			}
 		}
@@ -107,26 +110,36 @@ void process_knight(Knight& knight, ros::NodeHandle& nh)
 		{
 			knight.need_path = true;
 			pub_vel.publish(msg);
+			ros::spinOnce();
+			loop_rate.sleep();
 			continue;
 		}
 
-		angle = atan2(new_x - knight.pose.position.x, new_y - knight.pose.position.y);
+		lock.lock();
+		angle = -atan2(new_x - knight.pose.position.x, new_y - knight.pose.position.y);
 		q[0] = knight.pose.orientation.x;
 		q[1] = knight.pose.orientation.y;
 		q[2] = knight.pose.orientation.z;
 		q[3] = knight.pose.orientation.w;
+		lock.unlock();
 
-		if (theta_difference(q.getAngle(), angle) < ANGLE_THRESH)
+		yaw = tf2::getYaw(q);
+
+		ROS_WARN("yaw: %lf, angle: %lf", yaw, angle);
+
+		if (std::abs(theta_difference(yaw, angle)) < ANGLE_THRESH)
 		{
 			msg.linear.x = LIN_VEL;
 		}
 		else
 		{
-			msg.angular.z = theta_difference(q.getAngle(), angle) > ANGLE_THRESH ? -ANG_VEL : ANG_VEL;
+			msg.angular.z = theta_difference(yaw, angle) > ANGLE_THRESH ? -ANG_VEL : ANG_VEL;
 		}
+
 		pub_vel.publish(msg);
 
-		spinner.spin();
+		ros::spinOnce();
+
 		loop_rate.sleep();
 	}
 }
@@ -182,7 +195,7 @@ int main(int argc, char* argv[])
 		bots[i].pose.position.z = 0;
 		bots[i].step = 0;
 		bots[i].mode = darp_mode;
-        bots[i].need_path = true;
+		bots[i].need_path = true;
 	}
 
 	// for (int i = 0; i < bot_count; i++)
@@ -258,7 +271,19 @@ int main(int argc, char* argv[])
 	// }
 
 	ros::service::waitForService("/darp_path");
-	
+
+	std::vector<std::thread> threads;
+
+	for (int i = 0; i < bot_count; i++)
+	{
+		threads.emplace_back(process_knight, std::ref(bots[i]), std::ref(nh));
+	}
+
+	for (auto& thread : threads)
+	{
+		thread.join();
+	}
+
 
 	// int new_row[bot_count], new_col[bot_count];
 	// double new_x[bot_count], new_y[bot_count];

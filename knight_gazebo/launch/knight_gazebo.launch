@@ -11,5 +11,5 @@
     <arg name="y" default="-20" />
     <arg name="z" default="0.2" />
 
-    <node name="virat_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model knight -x $(arg x) -y $(arg y) -z $(arg z)" />
+    <node name="knight_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model knight -x $(arg x) -y $(arg y) -z $(arg z)" />
 </launch>
